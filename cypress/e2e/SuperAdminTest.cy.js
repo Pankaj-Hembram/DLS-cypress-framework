@@ -3,12 +3,14 @@ import Login from "../PageObjects/LoginPage";
 import AdminPage from "../PageObjects/AdminPage";
 import DirectorsPage from "../PageObjects/DirectorsPage"
 import {generateRandomString,generateRandomNumber} from "../support/utils"
+import DiagnosticiansPage from "../PageObjects/DiagnosticiansPage";
 
 describe("Super Admin Test ",()=>{
     const login = new Login();
     const dashboard = new DashboardPage();
     const admin = new AdminPage();
-    const director = new DirectorsPage()
+    const director = new DirectorsPage();
+    const diagnosticians = new DiagnosticiansPage();
 
     let adminFirstName;
     let adminLastName ;
@@ -21,6 +23,12 @@ describe("Super Admin Test ",()=>{
     let directorLocation;
     let directorUsername;
     let directorEmail;
+    let diagnosticiansFirstName;
+    let diagnosticiansLastName;
+    let diagnosticiansCellNumber;
+    let diagnosticiansLocation;
+    let diagnosticiansUsername;
+    let diagnosticiansEmail;
 
     beforeEach("Navigate to Login opage",()=>{
         cy.visit("https://topuptalent.com/Diagnosticlearning/#/")
@@ -38,7 +46,7 @@ describe("Super Admin Test ",()=>{
         cy.get(dashboard.superAdminHeader).should("have.text","SUPERADMIN")
     })
 
-    it.only("Verify super admin is able to create Directors",()=>{
+    it("Verify super admin is able to create Directors",()=>{
         directorFirstName="AU_"+generateRandomString(3) 
         directorLastName= "AU_"+generateRandomString(3);
         directoCellNumber= generateRandomNumber(10);
@@ -52,6 +60,21 @@ describe("Super Admin Test ",()=>{
         cy.get("tbody tr td:nth-child(2)").should('have.text',directorUsername)
         
    })
+   
+   it.only("Verify super admin is able to create Diagnosticians",()=>{
+    diagnosticiansFirstName="AU_"+generateRandomString(3) 
+    diagnosticiansLastName= "AU_"+generateRandomString(3);
+    diagnosticiansCellNumber= generateRandomNumber(10);
+    diagnosticiansLocation="Austin";
+    diagnosticiansUsername="AU"+generateRandomString(5)+generateRandomNumber(3);
+    diagnosticiansEmail="AU_"+ generateRandomString(3) + "12@yopmail.com";
+    dashboard.clickDiagnosticiansTab()
+    diagnosticians.clickCreateDiagnosticiansBtn()
+    diagnosticians.createDiagnosticians(directorFirstName,diagnosticiansLastName,diagnosticiansCellNumber,diagnosticiansEmail,diagnosticiansLocation,diagnosticiansUsername,"123456","123456")
+    cy.get(diagnosticians.searchTbx).type(diagnosticiansFirstName)
+    cy.get("tbody tr td:nth-child(2)").should('have.text',diagnosticiansUsername)
+    
+})
 
     it("Verify that SuperAdmin is able to create Admin or not", ()=>{ 
        adminFirstName = "AU_Ayla" + generateRandomString(3);
@@ -64,7 +87,6 @@ describe("Super Admin Test ",()=>{
        cy.get(admin.validationMsgBox).should("have.text","Admin Created Successfully")
     })
 
-    
 
     it("SuperAdmin is able to search created admin or not",()=>{
         dashboard.clickAdminsTab();
